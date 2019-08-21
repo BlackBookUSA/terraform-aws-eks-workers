@@ -149,6 +149,7 @@ data "aws_ami" "eks_worker" {
 
   filter {
     name   = "name"
+    platform = var.os == "windows" ? "Windows" : ""
     values = [var.eks_worker_ami_name_filter]
   }
 
@@ -219,18 +220,6 @@ module "autoscale_group" {
   cpu_utilization_low_period_seconds      = var.cpu_utilization_low_period_seconds
   cpu_utilization_low_statistic           = var.cpu_utilization_low_statistic
   cpu_utilization_low_threshold_percent   = var.cpu_utilization_low_threshold_percent
-}
-
-data "template_file" "userdata" {
-  count    = var.enabled == "true" ? 1 : 0
-  template = file("${path.module}/userdata.tpl")
-
-  vars {
-    cluster_endpoint           = var.cluster_endpoint
-    certificate_authority_data = var.cluster_certificate_authority_data
-    cluster_name               = var.cluster_name
-    bootstrap_extra_args       = var.bootstrap_extra_args
-  }
 }
 
 data "aws_iam_instance_profile" "default" {
