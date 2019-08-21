@@ -1,5 +1,20 @@
 locals {
   tags = merge(var.tags, map("kubernetes.io/cluster/${var.cluster_name}", "owned"))
+
+  windows_userdata = templatefile("${path.module}/windows_userdata.tpl", {
+    cluster_name         = var.cluster_name,
+    bootstrap_extra_args = var.bootstrap_extra_args
+  })
+
+  linux_userdata = templatefile("${path.module}/linux_userdata.tpl", {
+    cluster_endpoint           = var.cluster_endpoint,
+    certificate_authority_data = var.cluster_certificate_authority_data
+    cluster_name               = var.cluster_name,
+    bootstrap_extra_args       = var.bootstrap_extra_args
+  })
+
+  userdata = var.os == "linux" ? local.linux_userdata : local.windows_userdata
+
 }
 
 module "label" {
@@ -52,7 +67,7 @@ resource "aws_iam_role_policy_attachment" "amazon_ec2_container_registry_read_on
 }
 
 resource "aws_iam_role_policy_attachment" "existing_policies_attach_to_eks_workers_role" {
-  count      = var.enabled == "true" && var.use_existing_aws_iam_instance_profile== "false" ? var.workers_role_policy_arns_count : 0
+  count      = var.enabled == "true" && var.use_existing_aws_iam_instance_profile == "false" ? var.workers_role_policy_arns_count : 0
   policy_arn = var.workers_role_policy_arns[count.index]
   role       = join("", aws_iam_role.default.*.name)
 }
@@ -153,7 +168,7 @@ module "autoscale_group" {
   image_id                  = var.use_custom_image_id == "true" ? var.image_id : join("", data.aws_ami.eks_worker.*.id)
   iam_instance_profile_name = var.use_existing_aws_iam_instance_profile == "false" ? join("", aws_iam_instance_profile.default.*.name) : var.aws_iam_instance_profile_name
   security_group_ids        = [compact(concat(list(var.use_existing_security_group == "false" ? join("", aws_security_group.default.*.id) : var.workers_security_group_id), var.additional_security_group_ids))]
-  user_data_base64          = base64encode(join("", data.template_file.userdata.*.rendered))
+  user_data_base64          = base64encode(local.userdata)
   tags                      = module.label.tags
 
   instance_type                           = var.instance_type
@@ -228,6 +243,6 @@ data "template_file" "config_map_aws_auth" {
   template = file("${path.module}/config_map_aws_auth.tpl")
 
   vars {
-    aws_iam_role_arn = var.use_existing_aws_iam_instance_profile == "true" ?  join("", data.aws_iam_instance_profile.default.*.role_arn) : join("", aws_iam_role.default.*.arn)
+    aws_iam_role_arn = var.use_existing_aws_iam_instance_profile == "true" ? join("", data.aws_iam_instance_profile.default.*.role_arn) : join("", aws_iam_role.default.*.arn)
   }
 }
