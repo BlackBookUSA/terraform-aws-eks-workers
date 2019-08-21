@@ -148,9 +148,9 @@ data "aws_ami" "eks_worker" {
   name_regex  = var.eks_worker_ami_name_regex
 
   filter {
-    name   = "name"
+    name     = "name"
     platform = var.os == "windows" ? "Windows" : ""
-    values = [var.eks_worker_ami_name_filter]
+    values   = [var.eks_worker_ami_name_filter]
   }
 
   owners = ["602401143452"] # Amazon
