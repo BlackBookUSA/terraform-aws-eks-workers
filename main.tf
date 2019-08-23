@@ -35,7 +35,7 @@ data "aws_iam_policy_document" "assume_role" {
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
 
-    principals = {
+    principals {
       type        = "Service"
       identifiers = ["ec2.amazonaws.com"]
     }
@@ -136,7 +136,7 @@ resource "aws_security_group_rule" "ingress_cidr_blocks" {
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = [var.allowed_cidr_blocks]
+  cidr_blocks       = var.allowed_cidr_blocks
   security_group_id = join("", aws_security_group.default.*.id)
   type              = "ingress"
 }
@@ -149,8 +149,12 @@ data "aws_ami" "eks_worker" {
 
   filter {
     name     = "name"
-    platform = var.os == "windows" ? "Windows" : ""
     values   = [var.eks_worker_ami_name_filter]
+  }
+
+  filter {
+    name = "platform"
+    values = [var.os == "windows" ? "Windows" : ""]
   }
 
   owners = ["602401143452"] # Amazon
@@ -168,37 +172,37 @@ module "autoscale_group" {
 
   image_id                  = var.use_custom_image_id == "true" ? var.image_id : join("", data.aws_ami.eks_worker.*.id)
   iam_instance_profile_name = var.use_existing_aws_iam_instance_profile == "false" ? join("", aws_iam_instance_profile.default.*.name) : var.aws_iam_instance_profile_name
-  security_group_ids        = [compact(concat(list(var.use_existing_security_group == "false" ? join("", aws_security_group.default.*.id) : var.workers_security_group_id), var.additional_security_group_ids))]
+  security_group_ids        = compact(concat(list(var.use_existing_security_group == "false" ? join("", aws_security_group.default.*.id) : var.workers_security_group_id), var.additional_security_group_ids))
   user_data_base64          = base64encode(local.userdata)
   tags                      = module.label.tags
 
   instance_type                           = var.instance_type
-  subnet_ids                              = [var.subnet_ids]
+  subnet_ids                              = var.subnet_ids
   min_size                                = var.min_size
   max_size                                = var.max_size
   associate_public_ip_address             = var.associate_public_ip_address
-  block_device_mappings                   = [var.block_device_mappings]
-  credit_specification                    = [var.credit_specification]
+  block_device_mappings                   = var.block_device_mappings
+  credit_specification                    = var.credit_specification
   disable_api_termination                 = var.disable_api_termination
   ebs_optimized                           = var.ebs_optimized
-  elastic_gpu_specifications              = [var.elastic_gpu_specifications]
+  elastic_gpu_specifications              = var.elastic_gpu_specifications
   instance_initiated_shutdown_behavior    = var.instance_initiated_shutdown_behavior
-  instance_market_options                 = [var.instance_market_options]
+  instance_market_options                 = var.instance_market_options
   key_name                                = var.key_name
-  placement                               = [var.placement]
+  placement                               = var.placement
   enable_monitoring                       = var.enable_monitoring
-  load_balancers                          = [var.load_balancers]
+  load_balancers                          = var.load_balancers
   health_check_grace_period               = var.health_check_grace_period
   health_check_type                       = var.health_check_type
   min_elb_capacity                        = var.min_elb_capacity
   wait_for_elb_capacity                   = var.wait_for_elb_capacity
-  target_group_arns                       = [var.target_group_arns]
+  target_group_arns                       = var.target_group_arns
   default_cooldown                        = var.default_cooldown
   force_delete                            = var.force_delete
   termination_policies                    = var.termination_policies
   suspended_processes                     = var.suspended_processes
   placement_group                         = var.placement_group
-  enabled_metrics                         = [var.enabled_metrics]
+  enabled_metrics                         = var.enabled_metrics
   metrics_granularity                     = var.metrics_granularity
   wait_for_capacity_timeout               = var.wait_for_capacity_timeout
   protect_from_scale_in                   = var.protect_from_scale_in
@@ -231,7 +235,7 @@ data "template_file" "config_map_aws_auth" {
   count    = var.enabled == "true" ? 1 : 0
   template = file("${path.module}/config_map_aws_auth.tpl")
 
-  vars {
+  vars = {
     aws_iam_role_arn = var.use_existing_aws_iam_instance_profile == "true" ? join("", data.aws_iam_instance_profile.default.*.role_arn) : join("", aws_iam_role.default.*.arn)
   }
 }
