@@ -432,3 +432,9 @@ variable "workers_role_policy_arns_count" {
   default     = "0"
   description = "Count of policy ARNs that will be attached to the workers default role on creation. Needed to prevent Terraform error `count can't be computed`"
 }
+
+variable "os" {
+  type        = "string"
+  default     = "linux"
+  description = "Sets the OS as `linux` or `windows` which will control the ami and userdata selected."
+}
