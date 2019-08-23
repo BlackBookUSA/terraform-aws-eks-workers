@@ -2,7 +2,7 @@ data "aws_ami" "linux_eks_worker" {
   count = var.enabled == "true" && var.use_custom_image_id == "false" ? 1 : 0
 
   most_recent = true
-  name_regex  = var.eks_worker_ami_name_regex
+//  name_regex  = var.eks_worker_ami_name_regex
 
   filter {
     name     = "name"
@@ -16,7 +16,7 @@ data "aws_ami" "windows_eks_worker" {
   count = var.enabled == "true" && var.use_custom_image_id == "false" ? 1 : 0
 
   most_recent = true
-  name_regex  = var.eks_worker_ami_name_regex
+//  name_regex  = var.eks_worker_ami_name_regex
 
   filter {
     name     = "name"
