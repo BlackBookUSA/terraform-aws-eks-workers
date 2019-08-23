@@ -32,7 +32,7 @@ data "aws_ami" "windows_eks_worker" {
 }
 
 locals {
-  ami_id = var.os == "windows" ? data.aws_ami.windows_eks_worker.id : data.aws_ami.linux_eks_worker.id
+  ami_id = var.os == "windows" ? data.aws_ami.windows_eks_worker.*.id : data.aws_ami.linux_eks_worker.*.id
 
   tags = merge(var.tags, map("kubernetes.io/cluster/${var.cluster_name}", "owned"))
 
