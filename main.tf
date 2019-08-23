@@ -18,7 +18,7 @@ locals {
 }
 
 module "label" {
-  source     = "git::https://github.com/blackbookusa/terraform-terraform-label.git?ref=tags/0.2.1"
+  source     = "git::https://github.com/blackbookusa/terraform-terraform-label.git?ref=tags/0.4.1"
   namespace  = var.namespace
   stage      = var.stage
   name       = var.name
