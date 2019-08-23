@@ -2,11 +2,11 @@ data "aws_ami" "linux_eks_worker" {
   count = var.enabled == "true" && var.use_custom_image_id == "false" ? 1 : 0
 
   most_recent = true
-//  name_regex  = var.eks_worker_ami_name_regex
+  //  name_regex  = var.eks_worker_ami_name_regex
 
   filter {
-    name     = "name"
-    values   = [var.eks_worker_ami_name_filter]
+    name   = "name"
+    values = [var.eks_worker_ami_name_filter]
   }
 
   owners = ["602401143452"] # Amazon
@@ -16,15 +16,15 @@ data "aws_ami" "windows_eks_worker" {
   count = var.enabled == "true" && var.use_custom_image_id == "false" ? 1 : 0
 
   most_recent = true
-//  name_regex  = var.eks_worker_ami_name_regex
+  //  name_regex  = var.eks_worker_ami_name_regex
 
   filter {
-    name     = "name"
-    values   = [var.eks_worker_ami_name_filter]
+    name   = "name"
+    values = [var.eks_worker_ami_name_filter]
   }
 
   filter {
-    name = "platform"
+    name   = "platform"
     values = ["windows"]
   }
 
@@ -32,7 +32,7 @@ data "aws_ami" "windows_eks_worker" {
 }
 
 locals {
-  ami_id = var.os == "windows" ? data.aws_ami.windows_eks_worker[0].id : data.aws_ami.linux_eks_worker[0].id
+  ami_id = var.os == "windows" ? data.aws_ami.windows_eks_worker.id : data.aws_ami.linux_eks_worker.id
 
   tags = merge(var.tags, map("kubernetes.io/cluster/${var.cluster_name}", "owned"))
 
