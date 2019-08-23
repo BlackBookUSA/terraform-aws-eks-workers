@@ -1,4 +1,39 @@
+data "aws_ami" "linux_eks_worker" {
+  count = var.enabled == "true" && var.use_custom_image_id == "false" ? 1 : 0
+
+  most_recent = true
+  name_regex  = var.eks_worker_ami_name_regex
+
+  filter {
+    name     = "name"
+    values   = [var.eks_worker_ami_name_filter]
+  }
+
+  owners = ["602401143452"] # Amazon
+}
+
+data "aws_ami" "windows_eks_worker" {
+  count = var.enabled == "true" && var.use_custom_image_id == "false" ? 1 : 0
+
+  most_recent = true
+  name_regex  = var.eks_worker_ami_name_regex
+
+  filter {
+    name     = "name"
+    values   = [var.eks_worker_ami_name_filter]
+  }
+
+  filter {
+    name = "platform"
+    values = ["windows"]
+  }
+
+  owners = ["602401143452"] # Amazon
+}
+
 locals {
+  ami_id = var.os == "windows" ? data.aws_ami.windows_eks_worker[0].id : data.aws_ami.linux_eks_worker[0].id
+
   tags = merge(var.tags, map("kubernetes.io/cluster/${var.cluster_name}", "owned"))
 
   windows_userdata = templatefile("${path.module}/windows_userdata.tpl", {
@@ -141,25 +176,6 @@ resource "aws_security_group_rule" "ingress_cidr_blocks" {
   type              = "ingress"
 }
 
-data "aws_ami" "eks_worker" {
-  count = var.enabled == "true" && var.use_custom_image_id == "false" ? 1 : 0
-
-  most_recent = true
-  name_regex  = var.eks_worker_ami_name_regex
-
-  filter {
-    name     = "name"
-    values   = [var.eks_worker_ami_name_filter]
-  }
-
-  filter {
-    name = "platform"
-    values = [var.os == "windows" ? "Windows" : ""]
-  }
-
-  owners = ["602401143452"] # Amazon
-}
-
 module "autoscale_group" {
   source = "git::https://github.com/blackbookusa/terraform-aws-ec2-autoscale-group.git?ref=tags/0.1.6"
 
@@ -170,7 +186,7 @@ module "autoscale_group" {
   delimiter  = var.delimiter
   attributes = var.attributes
 
-  image_id                  = var.use_custom_image_id == "true" ? var.image_id : join("", data.aws_ami.eks_worker.*.id)
+  image_id                  = var.use_custom_image_id == "true" ? var.image_id : join("", local.ami_id)
   iam_instance_profile_name = var.use_existing_aws_iam_instance_profile == "false" ? join("", aws_iam_instance_profile.default.*.name) : var.aws_iam_instance_profile_name
   security_group_ids        = compact(concat(list(var.use_existing_security_group == "false" ? join("", aws_security_group.default.*.id) : var.workers_security_group_id), var.additional_security_group_ids))
   user_data_base64          = base64encode(local.userdata)
