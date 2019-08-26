@@ -43,7 +43,7 @@ locals {
 
   linux_userdata = templatefile("${path.module}/linux_userdata.tpl", {
     cluster_endpoint           = var.cluster_endpoint,
-    certificate_authority_data = var.cluster_certificate_authority_data
+    certificate_authority_data = var.cluster_certificate_authority_data,
     cluster_name               = var.cluster_name,
     bootstrap_extra_args       = var.bootstrap_extra_args
   })
