@@ -440,8 +440,8 @@ variable "os" {
 }
 
 variable "has_sister_cluster" {
-  type        = bool
-  default     = false
+  type        = string
+  default     = "false"
   description = "whether or not a sister cluster exists (for windows + linux)"
 }
 
