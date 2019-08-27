@@ -438,3 +438,9 @@ variable "os" {
   default     = "linux"
   description = "Sets the OS as `linux` or `windows` which will control the ami and userdata selected."
 }
+
+variable "has_sister_cluster" {
+  type        = bool
+  default     = false
+  description = "whether or not a sister cluster exists (for windows + linux)"
+}

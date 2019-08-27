@@ -154,6 +154,17 @@ resource "aws_security_group_rule" "ingress_cluster" {
   type                     = "ingress"
 }
 
+resource "aws_security_group_rule" "sister_cluster" {
+  count                    = var.enabled && var.use_existing_security_group && var.has_sister_cluster ? 1 : 0
+  description              = "Allow worker kubelets and pods to receive communication from the sister cluster"
+  from_port                = 0
+  to_port                  = 65535
+  protocol                 = "-1"
+  security_group_id        = join("", aws_security_group.default.*.id)
+  source_security_group_id = var.cluster_security_group_id
+  type                     = "ingress"
+}
+
 resource "aws_security_group_rule" "ingress_security_groups" {
   count                    = var.enabled && var.use_existing_security_group == "false" ? length(var.allowed_security_groups) : 0
   description              = "Allow inbound traffic from existing Security Groups"
