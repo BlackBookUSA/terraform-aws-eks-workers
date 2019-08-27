@@ -440,12 +440,12 @@ variable "os" {
 }
 
 variable "has_sister_cluster" {
-  type        = string
+  type        = "string"
   default     = "false"
   description = "whether or not a sister cluster exists (for windows + linux)"
 }
 
 variable "sister_cluster_security_group_id" {
-  type        = string
+  type        = "string"
   description = "id of sister cluster's security group"
 }

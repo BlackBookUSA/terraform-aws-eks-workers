@@ -155,7 +155,7 @@ resource "aws_security_group_rule" "ingress_cluster" {
 }
 
 resource "aws_security_group_rule" "sister_cluster" {
-  count                    = var.enabled && var.use_existing_security_group == "false" && var.has_sister_cluster == "true" ? 1 : 0
+  count                    = var.enabled && var.has_sister_cluster == "true" ? 1 : 0
   description              = "Allow worker kubelets and pods to receive communication from the sister cluster"
   from_port                = 0
   to_port                  = 65535
