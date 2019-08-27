@@ -444,3 +444,8 @@ variable "has_sister_cluster" {
   default     = false
   description = "whether or not a sister cluster exists (for windows + linux)"
 }
+
+variable "sister_cluster_security_group_id" {
+  type        = string
+  description = "id of sister cluster's security group"
+}
