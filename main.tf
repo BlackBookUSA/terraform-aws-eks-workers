@@ -188,7 +188,7 @@ resource "aws_security_group_rule" "ingress_cidr_blocks" {
 }
 
 module "autoscale_group" {
-  source = "git::https://github.com/blackbookusa/terraform-aws-ec2-autoscale-group.git?ref=tags/0.1.7"
+  source = "git::https://github.com/blackbookusa/terraform-aws-ec2-autoscale-group.git?ref=tags/0.1.8"
 
   ebs_volume_size = var.ebs_volume_size
   encrypt_ebs     = var.encrypt_ebs
