@@ -449,3 +449,13 @@ variable "sister_cluster_security_group_id" {
   type        = "string"
   description = "id of sister cluster's security group"
 }
+
+variable "ebs_volume_size" {
+  type        = "string"
+  default     = 300
+}
+
+variable "encrypt_ebs" {
+  type        = "string"
+  default     = "true"
+}

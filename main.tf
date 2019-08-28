@@ -188,14 +188,16 @@ resource "aws_security_group_rule" "ingress_cidr_blocks" {
 }
 
 module "autoscale_group" {
-  source = "git::https://github.com/blackbookusa/terraform-aws-ec2-autoscale-group.git?ref=tags/0.1.6"
+  source = "git::https://github.com/blackbookusa/terraform-aws-ec2-autoscale-group.git?ref=tags/0.1.7"
 
-  enabled    = var.enabled
-  namespace  = var.namespace
-  stage      = var.stage
-  name       = var.name
-  delimiter  = var.delimiter
-  attributes = var.attributes
+  ebs_volume_size = var.ebs_volume_size
+  encrypt_ebs     = var.encrypt_ebs
+  enabled         = var.enabled
+  namespace       = var.namespace
+  stage           = var.stage
+  name            = var.name
+  delimiter       = var.delimiter
+  attributes      = var.attributes
 
   image_id                  = var.use_custom_image_id == "true" ? var.image_id : join("", local.ami_id)
   iam_instance_profile_name = var.use_existing_aws_iam_instance_profile == "false" ? join("", aws_iam_instance_profile.default.*.name) : var.aws_iam_instance_profile_name
