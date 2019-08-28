@@ -188,7 +188,7 @@ resource "aws_security_group_rule" "ingress_cidr_blocks" {
 }
 
 module "autoscale_group" {
-  source = "git::https://github.com/blackbookusa/terraform-aws-ec2-autoscale-group.git?ref=tags/0.1.9"
+  source = "git::https://github.com/blackbookusa/terraform-aws-ec2-autoscale-group.git?ref=tags/0.1.10"
 
   os = var.os
 
