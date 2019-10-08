@@ -87,13 +87,25 @@ variable "instance_initiated_shutdown_behavior" {
   default     = "terminate"
 }
 
-variable "image_id" {
+variable "windows_image_id" {
   type        = "string"
   description = "EC2 image ID to launch. If not provided, the module will lookup the most recent EKS AMI. See https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html for more details on EKS-optimized images"
   default     = ""
 }
 
-variable "use_custom_image_id" {
+variable "use_custom_windows_image_id" {
+  type        = "string"
+  description = "If set to `true`, will use variable `image_id` to run EKS workers inside autoscaling group"
+  default     = "false"
+}
+
+variable "linux_image_id" {
+  type        = "string"
+  description = "EC2 image ID to launch. If not provided, the module will lookup the most recent EKS AMI. See https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html for more details on EKS-optimized images"
+  default     = ""
+}
+
+variable "use_custom_linux_image_id" {
   type        = "string"
   description = "If set to `true`, will use variable `image_id` to run EKS workers inside autoscaling group"
   default     = "false"

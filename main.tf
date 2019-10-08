@@ -1,5 +1,5 @@
 data "aws_ami" "linux_eks_worker" {
-  count = var.enabled && var.use_custom_image_id == "false" ? 1 : 0
+  count = var.enabled && var.use_custom_linux_image_id == "false" ? 1 : 0
 
   most_recent = true
   //  name_regex  = var.eks_worker_ami_name_regex
@@ -13,7 +13,7 @@ data "aws_ami" "linux_eks_worker" {
 }
 
 data "aws_ami" "windows_eks_worker" {
-  count = var.enabled && var.use_custom_image_id == "false" ? 1 : 0
+  count = var.enabled && var.use_custom_windows_image_id == "false" ? 1 : 0
 
   most_recent = true
   //  name_regex  = var.eks_worker_ami_name_regex
@@ -201,7 +201,7 @@ module "autoscale_group" {
   delimiter       = var.delimiter
   attributes      = var.attributes
 
-  image_id                  = var.use_custom_image_id == "true" ? var.image_id : join("", local.ami_id)
+  image_id                  = (var.use_custom_linux_image_id || var.use_custom_windows_image_id) == "true" ? (var.os == "windows" ? var.windows_image_id : var.linux_image_id) : join("", local.ami_id)
   iam_instance_profile_name = var.use_existing_aws_iam_instance_profile == "false" ? join("", aws_iam_instance_profile.default.*.name) : var.aws_iam_instance_profile_name
   security_group_ids        = compact(concat(list(var.use_existing_security_group == "false" ? join("", aws_security_group.default.*.id) : var.workers_security_group_id), var.additional_security_group_ids))
   user_data_base64          = base64encode(local.userdata)
