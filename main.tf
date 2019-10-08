@@ -6,7 +6,7 @@ data "aws_ami" "linux_eks_worker" {
 
   filter {
     name   = "name"
-    values = [var.eks_worker_ami_name_filter]
+    values = [var.linux_eks_worker_ami_name_filter]
   }
 
   owners = ["602401143452"] # Amazon
@@ -20,7 +20,7 @@ data "aws_ami" "windows_eks_worker" {
 
   filter {
     name   = "name"
-    values = [var.eks_worker_ami_name_filter]
+    values = [var.windows_eks_worker_ami_name_filter]
   }
 
   filter {

@@ -99,10 +99,16 @@ variable "use_custom_image_id" {
   default     = "false"
 }
 
-variable "eks_worker_ami_name_filter" {
+variable "linux_eks_worker_ami_name_filter" {
   type        = "string"
   description = "AMI name filter to lookup the most recent EKS AMI if `image_id` is not provided"
   default     = "amazon-eks-node-*"
+}
+
+variable "windows_eks_worker_ami_name_filter" {
+  type        = "string"
+  description = "AMI name filter to lookup the most recent EKS AMI if `image_id` is not provided"
+  default     = "Windows_Server-2019-English-Core-EKS_Optimized-*"
 }
 
 variable "eks_worker_ami_name_regex" {
