@@ -27,7 +27,7 @@ variable "delimiter" {
 }
 
 variable "attributes" {
-  type        = list(string)
+  type        = list(any)
   default     = []
   description = "Additional attributes (e.g. `1`)"
 }
@@ -70,13 +70,13 @@ variable "vpc_id" {
 }
 
 variable "allowed_security_groups" {
-  type        = list(string)
+  type        = list(any)
   default     = []
   description = "List of Security Group IDs to be allowed to connect to the worker nodes"
 }
 
 variable "allowed_cidr_blocks" {
-  type        = list(string)
+  type        = list(any)
   default     = []
   description = "List of CIDR blocks to be allowed to connect to the worker nodes"
 }
@@ -157,31 +157,31 @@ variable "ebs_optimized" {
 
 variable "block_device_mappings" {
   description = "Specify volumes to attach to the instance besides the volumes specified by the AMI"
-  type        = list(string)
+  type        = list(any)
   default     = []
 }
 
 variable "instance_market_options" {
   description = "The market (purchasing) option for the instances"
-  type        = list(string)
+  type        = list(any)
   default     = []
 }
 
 variable "placement" {
   description = "The placement specifications of the instances"
-  type        = list(string)
+  type        = list(any)
   default     = []
 }
 
 variable "credit_specification" {
   description = "Customize the credit specification of the instances"
-  type        = list(string)
+  type        = list(any)
   default     = []
 }
 
 variable "elastic_gpu_specifications" {
   description = "Specifications of Elastic GPU to attach to the instances"
-  type        = list(string)
+  type        = list(any)
   default     = []
 }
 
@@ -200,7 +200,7 @@ variable "min_size" {
 
 variable "subnet_ids" {
   description = "A list of subnet IDs to launch resources in"
-  type        = list(string)
+  type        = list(any)
 }
 
 variable "default_cooldown" {
@@ -225,25 +225,25 @@ variable "force_delete" {
 }
 
 variable "load_balancers" {
-  type        = list(string)
+  type        = list(any)
   description = "A list of elastic load balancer names to add to the autoscaling group names. Only valid for classic load balancers. For ALBs, use `target_group_arns` instead"
   default     = []
 }
 
 variable "target_group_arns" {
-  type        = list(string)
+  type        = list(any)
   description = "A list of aws_alb_target_group ARNs, for use with Application Load Balancing"
   default     = []
 }
 
 variable "termination_policies" {
   description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are `OldestInstance`, `NewestInstance`, `OldestLaunchConfiguration`, `ClosestToNextInstanceHour`, `Default`"
-  type        = list(string)
+  type        = list(any)
   default     = ["Default"]
 }
 
 variable "suspended_processes" {
-  type        = list(string)
+  type        = list(any)
   description = "A list of processes to suspend for the AutoScaling Group. The allowed values are `Launch`, `Terminate`, `HealthCheck`, `ReplaceUnhealthy`, `AZRebalance`, `AlarmNotification`, `ScheduledActions`, `AddToLoadBalancer`. Note that if you suspend either the `Launch` or `Terminate` process types, it can prevent your autoscaling group from functioning properly."
   default     = []
 }
@@ -262,7 +262,7 @@ variable "metrics_granularity" {
 
 variable "enabled_metrics" {
   description = "A list of metrics to collect. The allowed values are `GroupMinSize`, `GroupMaxSize`, `GroupDesiredCapacity`, `GroupInServiceInstances`, `GroupPendingInstances`, `GroupStandbyInstances`, `GroupTerminatingInstances`, `GroupTotalInstances`"
-  type        = list(string)
+  type        = list(any)
 
   default = [
     "GroupMinSize",
@@ -428,7 +428,7 @@ variable "use_existing_security_group" {
 }
 
 variable "additional_security_group_ids" {
-  type        = list(string)
+  type        = list(any)
   default     = []
   description = "Additional list of security groups that will be attached to the autoscaling group"
 }
@@ -440,7 +440,7 @@ variable "use_existing_aws_iam_instance_profile" {
 }
 
 variable "workers_role_policy_arns" {
-  type        = list(string)
+  type        = list(any)
   default     = []
   description = "List of policy ARNs that will be attached to the workers default role on creation"
 }
