@@ -113,14 +113,14 @@ variable "use_custom_linux_image_id" {
 
 variable "linux_eks_worker_ami_name_filter" {
   type        = "string"
-  description = "AMI name filter to lookup the most recent EKS AMI if `image_id` is not provided"
-  default     = "amazon-eks-node-*"
+  description = "AMI name filter to lookup the most recent EKS AMI if `image_id` is not provided. This is combined with the kubernetes version to produce a search string and should not include `-*` at the end"
+  default     = "amazon-eks-node"
 }
 
 variable "windows_eks_worker_ami_name_filter" {
   type        = "string"
-  description = "AMI name filter to lookup the most recent EKS AMI if `image_id` is not provided"
-  default     = "Windows_Server-2019-English-Core-EKS_Optimized-*"
+  description = "AMI name filter to lookup the most recent EKS AMI if `image_id` is not provided This is combined with the kubernetes version to produce a search string and should not include `-*` at the end"
+  default     = "Windows_Server-2019-English-Core-EKS_Optimized"
 }
 
 variable "eks_worker_ami_name_regex" {
@@ -469,11 +469,16 @@ variable "sister_cluster_security_group_id" {
 }
 
 variable "ebs_volume_size" {
-  type        = "string"
-  default     = 300
+  type    = "string"
+  default = 300
 }
 
 variable "encrypt_ebs" {
-  type        = "string"
-  default     = "true"
+  type    = "string"
+  default = "true"
+}
+
+variable "kubernetes_version" {
+  type    = string
+  default = "1.14"
 }

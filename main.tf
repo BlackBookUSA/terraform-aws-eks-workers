@@ -6,7 +6,7 @@ data "aws_ami" "linux_eks_worker" {
 
   filter {
     name   = "name"
-    values = [var.linux_eks_worker_ami_name_filter]
+    values = [local.linux_ami_filter]
   }
 
   owners = ["602401143452"] # Amazon
@@ -20,7 +20,7 @@ data "aws_ami" "windows_eks_worker" {
 
   filter {
     name   = "name"
-    values = [var.windows_eks_worker_ami_name_filter]
+    values = [local.windows_ami_filter]
   }
 
   filter {
@@ -28,7 +28,7 @@ data "aws_ami" "windows_eks_worker" {
     values = ["windows"]
   }
 
-  owners = ["602401143452"] # Amazon
+  owners = ["602401143452", "801119661308"] # Amazon
 }
 
 locals {
@@ -49,6 +49,10 @@ locals {
   })
 
   userdata = var.os == "linux" ? local.linux_userdata : local.windows_userdata
+
+  windows_ami_filter = join("-", [var.windows_eks_worker_ami_name_filter, var.kubernetes_version, "*"])
+
+  linux_ami_filter = join("-", [var.linux_eks_worker_ami_name_filter, var.kubernetes_version, "*"])
 
 }
 
