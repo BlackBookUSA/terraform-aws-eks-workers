@@ -9,10 +9,10 @@ data "aws_ami" "eks_worker" {
     values = var.eks_worker_ami_name_filter != "" ? [var.eks_worker_ami_name_filter] : [local.ami_filter]
   }
 
-  filter {
-    name   = "platform"
-    values = [var.os]
-  }
+  //  filter {
+  //    name   = "platform"
+  //    values = [var.os == "linux" ? "" : "windows"]
+  //  }
 
   owners = var.ami_owner_id != "" ? [var.ami_owner_id] : ["602401143452", "801119661308"] # Amazon
 }
