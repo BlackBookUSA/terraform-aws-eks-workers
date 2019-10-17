@@ -90,6 +90,7 @@ variable "instance_initiated_shutdown_behavior" {
 variable "image_id" {
   type        = string
   description = "EC2 image ID to launch. If not provided, the module will lookup the most recent EKS AMI. See https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html for more details on EKS-optimized images"
+  default = ""
 }
 
 variable "use_custom_image_id" {
@@ -101,6 +102,7 @@ variable "use_custom_image_id" {
 variable "eks_worker_ami_name_filter" {
   type        = string
   description = "AMI name filter to lookup the most recent EKS AMI if `image_id` is not provided. This is combined with the kubernetes version to produce a search string and should not include `-*` at the end"
+  default = ""
 }
 
 variable "eks_worker_ami_name_regex" {
@@ -465,4 +467,5 @@ variable "kubernetes_version" {
 
 variable "ami_owner_id" {
   type = string
+  default = ""
 }
