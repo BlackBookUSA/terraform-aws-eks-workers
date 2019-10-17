@@ -87,40 +87,20 @@ variable "instance_initiated_shutdown_behavior" {
   default     = "terminate"
 }
 
-variable "windows_image_id" {
+variable "image_id" {
   type        = string
   description = "EC2 image ID to launch. If not provided, the module will lookup the most recent EKS AMI. See https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html for more details on EKS-optimized images"
-  default     = ""
 }
 
-variable "use_custom_windows_image_id" {
+variable "use_custom_image_id" {
   type        = string
   description = "If set to `true`, will use variable `image_id` to run EKS workers inside autoscaling group"
   default     = "false"
 }
 
-variable "linux_image_id" {
-  type        = string
-  description = "EC2 image ID to launch. If not provided, the module will lookup the most recent EKS AMI. See https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html for more details on EKS-optimized images"
-  default     = ""
-}
-
-variable "use_custom_linux_image_id" {
-  type        = string
-  description = "If set to `true`, will use variable `image_id` to run EKS workers inside autoscaling group"
-  default     = "false"
-}
-
-variable "linux_eks_worker_ami_name_filter" {
+variable "eks_worker_ami_name_filter" {
   type        = string
   description = "AMI name filter to lookup the most recent EKS AMI if `image_id` is not provided. This is combined with the kubernetes version to produce a search string and should not include `-*` at the end"
-  default     = "amazon-eks-node"
-}
-
-variable "windows_eks_worker_ami_name_filter" {
-  type        = string
-  description = "AMI name filter to lookup the most recent EKS AMI if `image_id` is not provided This is combined with the kubernetes version to produce a search string and should not include `-*` at the end"
-  default     = "Windows_Server-2019-English-Core-EKS_Optimized"
 }
 
 variable "eks_worker_ami_name_regex" {
@@ -481,4 +461,8 @@ variable "encrypt_ebs" {
 variable "kubernetes_version" {
   type    = string
   default = "1.14"
+}
+
+variable "ami_owner_id" {
+  type = string
 }

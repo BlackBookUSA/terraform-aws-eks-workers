@@ -1,38 +1,24 @@
-data "aws_ami" "linux_eks_worker" {
-  count = var.enabled && var.use_custom_linux_image_id == "false" ? 1 : 0
+data "aws_ami" "eks_worker" {
+  count = var.enabled && var.use_custom_image_id == "false" ? 1 : 0
 
   most_recent = true
   //  name_regex  = var.eks_worker_ami_name_regex
 
   filter {
     name   = "name"
-    values = [local.linux_ami_filter]
-  }
-
-  owners = ["602401143452"] # Amazon
-}
-
-data "aws_ami" "windows_eks_worker" {
-  count = var.enabled && var.use_custom_windows_image_id == "false" ? 1 : 0
-
-  most_recent = true
-  //  name_regex  = var.eks_worker_ami_name_regex
-
-  filter {
-    name   = "name"
-    values = [local.windows_ami_filter]
+    values = var.eks_worker_ami_name_filter ? [var.eks_worker_ami_name_filter] : [local.ami_filter]
   }
 
   filter {
     name   = "platform"
-    values = ["windows"]
+    values = [var.os]
   }
 
-  owners = ["602401143452", "801119661308"] # Amazon
+  owners = var.ami_owner_id ? [var.ami_owner_id] : ["602401143452", "801119661308"] # Amazon
 }
 
 locals {
-  ami_id = var.os == "windows" ? [data.aws_ami.windows_eks_worker[0].id] : [data.aws_ami.linux_eks_worker[0].id]
+  ami_id = [data.aws_ami.eks_worker[0].id]
 
   tags = merge(var.tags, map("kubernetes.io/cluster/${var.cluster_name}", "owned"))
 
@@ -48,12 +34,14 @@ locals {
     bootstrap_extra_args       = var.bootstrap_extra_args
   })
 
+  default_ami_filter_map = {
+    windows = "Windows_Server-2019-English-Core-EKS_Optimized",
+    linux   = "amazon-eks-node"
+  }
+
   userdata = var.os == "linux" ? local.linux_userdata : local.windows_userdata
 
-  windows_ami_filter = join("-", [var.windows_eks_worker_ami_name_filter, var.kubernetes_version, "*"])
-
-  linux_ami_filter = join("-", [var.linux_eks_worker_ami_name_filter, var.kubernetes_version, "*"])
-
+  ami_filter = join("-", [local.default_ami_filter_map[var.os], var.kubernetes_version, "*"])
 }
 
 module "label" {
@@ -205,7 +193,7 @@ module "autoscale_group" {
   delimiter       = var.delimiter
   attributes      = var.attributes
 
-  image_id                  = (var.use_custom_linux_image_id || var.use_custom_windows_image_id) == "true" ? (var.os == "windows" ? var.windows_image_id : var.linux_image_id) : join("", local.ami_id)
+  image_id                  = var.use_custom_image_id == "true" ? var.image_id : join("", local.ami_id)
   iam_instance_profile_name = var.use_existing_aws_iam_instance_profile == "false" ? join("", aws_iam_instance_profile.default.*.name) : var.aws_iam_instance_profile_name
   security_group_ids        = compact(concat(list(var.use_existing_security_group == "false" ? join("", aws_security_group.default.*.id) : var.workers_security_group_id), var.additional_security_group_ids))
   user_data_base64          = base64encode(local.userdata)
