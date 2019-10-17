@@ -6,7 +6,7 @@ data "aws_ami" "eks_worker" {
 
   filter {
     name   = "name"
-    values = var.eks_worker_ami_name_filter ? [var.eks_worker_ami_name_filter] : [local.ami_filter]
+    values = var.eks_worker_ami_name_filter != "" ? [var.eks_worker_ami_name_filter] : [local.ami_filter]
   }
 
   filter {
@@ -14,7 +14,7 @@ data "aws_ami" "eks_worker" {
     values = [var.os]
   }
 
-  owners = var.ami_owner_id ? [var.ami_owner_id] : ["602401143452", "801119661308"] # Amazon
+  owners = var.ami_owner_id != "" ? [var.ami_owner_id] : ["602401143452", "801119661308"] # Amazon
 }
 
 locals {
